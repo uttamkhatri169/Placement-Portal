@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMS Placement Portal</title>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen font-sans text-gray-900">
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar"
+            class="w-64 glass-dark text-white hidden flex-col transition-all duration-300 border-r border-slate-700/50">
+            <div class="p-6 border-b border-slate-700/50">
+                <div class="flex items-center space-x-3">
+                    <div
+                        class="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center shadow-lg">
+                        <span class="font-bold text-white text-lg">U</span>
+                    </div>
+                    <div>
+                        <h2
+                            class="text-xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200">
+                            UMS Portal</h2>
+                        <p class="text-slate-400 text-xs">Placement Cell</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav id="nav-links" class="flex-1 p-4 space-y-1 overflow-y-auto text-sm">
+                <a href="#" onclick="navigate('dashboard')"
+                    class="block px-4 py-2 rounded hover:bg-slate-800 transition">Dashboard</a>
+                <a href="#" onclick="navigate('profile')"
+                    class="block px-4 py-2 rounded hover:bg-slate-800 transition">Profile (Career Services Reg)</a>
+                <a href="#" onclick="navigate('drives')"
+                    class="block px-4 py-2 rounded hover:bg-slate-800 transition">Placement Portal (Drives)</a>
+                <a href="#" onclick="navigate('internships')"
+                    class="block px-4 py-2 rounded hover:bg-slate-800 transition">OJT/Internship Application</a>
+                <a href="#" onclick="navigate('attendance')"
+                    class="block px-4 py-2 rounded hover:bg-slate-800 transition">OJT/Internship Attendance</a>
+                <a href="#" onclick="navigate('documents')"
+                    class="block px-4 py-2 rounded hover:bg-slate-800 transition">Placement Document Repository</a>
+                <a href="#" onclick="navigate('benefits')"
+                    class="block px-4 py-2 rounded hover:bg-slate-800 transition">Special Academic Benefits</a>
+                <a href="#" onclick="navigate('applications')"
+                    class="block px-4 py-2 rounded hover:bg-slate-800 transition">My Applications</a>
+                <div class="pt-4 pb-2 text-xs text-slate-500 uppercase font-semibold">Policy & Exit</div>
+                <a href="#" onclick="navigate('policy')"
+                    class="block px-4 py-2 rounded hover:bg-slate-800 transition">Placement Policy</a>
+                <a href="#" onclick="logout()" class="block px-4 py-2 rounded hover:bg-slate-800 transition">Exit From
+                    Career Services</a>
+            </nav>
+
+            <!-- Logout moved to nav -->
+            <div class="p-4 border-t border-slate-700 text-xs text-center text-slate-500">
+                &copy; 2026 UMS
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col">
+            <!-- Topbar -->
+            <header id="topbar"
+                class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8 hidden">
+                <!-- Left side -->
+                <h2 id="page-title" class="text-xl font-semibold text-gray-800 capitalize">Dashboard</h2>
+
+                <!-- Right side (Profile Menu) -->
+                <div class="relative">
+                    <button onclick="toggleProfileMenu()" class="flex items-center space-x-3 focus:outline-none">
+                        <div class="text-right hidden md:block">
+                            <p id="topbar-user-name" class="text-sm font-semibold text-gray-700">User</p>
+                            <p id="topbar-user-role" class="text-xs text-gray-500">Student</p>
+                        </div>
+                        <div class="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold"
+                            id="user-avatar">
+                            U
+                        </div>
+                        <svg class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div id="profile-menu"
+                        class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 ring-1 ring-black ring-opacity-5">
+                        <div class="px-4 py-2 border-b text-xs text-gray-500 md:hidden">
+                            <p id="mobile-user-name" class="font-bold text-gray-800">User</p>
+                            <p id="mobile-user-email" class="truncate">email@example.com</p>
+                        </div>
+                        <a href="#" onclick="navigate('profile'); toggleProfileMenu()"
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Profile</a>
+                        <a href="#" onclick="navigate('applications'); toggleProfileMenu()"
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Applications</a>
+                        <div class="border-t border-gray-100 my-1"></div>
+                        <a href="#" onclick="logout()"
+                            class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Logout</a>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div id="content" class="flex-1 p-8 overflow-y-auto">
+                <!-- Dynamic Content Loads Here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Inject Config -->
+    <script>
+        // These should ideally come from backend environment variables but for now we inject or mock
+        // Since I don't have the user's keys, I'll rely on the existing config if possible or ask user.
+        // I will fetch them from a secure endpoint or use the ones from settings.py if template rendered.
+        // Wait, Jinja2 can inject them!
+
+        const SUPABASE_URL = "{{ settings.SUPABASE_URL }}";
+        const SUPABASE_KEY = "{{ settings.SUPABASE_ANON_KEY }}";
+
+        // Initialize Supabase
+        const { createClient } = supabase;
+        window.supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    </script>
+
+    <!-- Toast Container -->
+    <div id="toast-container"
+        class="fixed top-5 left-1/2 -translate-x-1/2 z-50 flex flex-col space-y-3 pointer-events-none"></div>
+
+    <!-- App Logic -->
+    <script src="/static/js/app.js"></script>
+</body>
+
+</html>
