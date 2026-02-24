@@ -29,8 +29,22 @@ Once the build is complete, Render will provide a URL (e.g., `https://ums-placem
 
 ---
 
-> [!IMPORTANT]
-> **Database Security**: Ensure your Supabase database is properly secured. Since the app is now public, anyone with the URL can access the site. Ensure your RLS (Row Level Security) policies are active in Supabase.
+## Local vs Production: Why they are different?
 
+### 💻 Local Development (Windows)
+On your computer, you should continue to use:
+```powershell
+python run.py
+```
 > [!NOTE]
-> **SSL Bypass**: The current code includes an SSL bypass patch for local development issues. For a production environment on Render, this is typically not needed but has been kept for compatibility.
+> `gunicorn` does **not** work on Windows. That is why you saw an error when you tried to run it locally.
+
+### 🌐 Production Hosting (Render/Linux)
+On Render, we use `gunicorn` because it is designed for high-performance production environments.
+**Start Command on Render Dashboard:**
+```bash
+gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app
+```
+Render will automatically install `gunicorn` during the build process because I added it to your `requirements.txt`.
+
+---
