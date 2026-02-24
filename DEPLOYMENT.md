@@ -15,6 +15,7 @@ Go to [render.com](https://render.com) and sign up using your GitHub account.
    - **Environment**: `Python`
    - **Build Command**: `pip install -r requirements.txt`
    - **Start Command**: `gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app`
+     - *Note: If you get an "AttributeError", make sure the Start Command is exactly as above.*
 
 ## 4. Configure Environment Variables
 In the Render dashboard, go to the **Environment** tab and add the following keys from your `.env` file:
